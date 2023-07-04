@@ -31,3 +31,4 @@ if [[ $(getenforce) == Enforcing ]]; then
 else
     echo "SELinux not enforcing, skipping rule addition."
 fi
+
