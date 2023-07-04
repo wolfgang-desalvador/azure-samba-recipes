@@ -2,7 +2,10 @@
 
 rpm --import https://packages.microsoft.com/keys/microsoft.asc
 
-DISTRIB_CODENAME=el8
+SCRIPT_FOLDER="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+dist_version=$(rpm --eval "%dist")
+DISTRIB_CODENAME=${dist_version/*./}
 
 REPO_PATH=/etc/yum.repos.d/amlfs.repo
 echo -e "[amlfs]" > ${REPO_PATH}
@@ -29,4 +32,10 @@ if [[ $(getenforce) == Enforcing ]]; then
     setsebool -P samba_export_all_rw 1
 else
     echo "SELinux not enforcing, skipping rule addition."
+fi
+
+cp $SCRIPT_FOLDER/smb.conf.template  $SCRIPT_FOLDER/smb.conf
+
+if [[ $DISTRIB_CODENAME="el8" ]]; then
+    sed -i "/ea support/d" $SCRIPT_FOLDER/smb.conf
 fi
