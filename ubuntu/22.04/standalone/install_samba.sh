@@ -7,8 +7,19 @@ curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee
 
 apt update
 
-apt install amlfs-lustre-client-2.15.1-29-gbae0abe=$(uname -r)
+apt install -y amlfs-lustre-client-2.15.1-29-gbae0abe=$(uname -r)
 
-apt-get install samba
+apt-get install -y samba
 
-ufw allow samba
+if [[ $(systemctl is-active ufw) == active ]]; then
+    echo "Adding Firewall rules"
+    ufw allow samba
+else
+    echo "Firewall is disabled, skipping rule addition"
+fi
+
+if [[ $(getenforce) == Enforcing ]]; then
+    echo "Adding SELinux rule"
+else
+    echo "SELinux not enforcing, skipping rule addition."
+fi

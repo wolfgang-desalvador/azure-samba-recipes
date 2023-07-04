@@ -12,9 +12,21 @@ echo -e "enabled=1" >> ${REPO_PATH}
 echo -e "gpgcheck=1" >> ${REPO_PATH}
 echo -e "gpgkey=https://packages.microsoft.com/keys/microsoft.asc" >> ${REPO_PATH}
 
-yum install amlfs-lustre-client-2.15.1_29_gbae0abe-$(uname -r | sed -e "s/\.$(uname -p)$//" | sed -re 's/[-_]/\./g')-1
+yum install -y amlfs-lustre-client-2.15.1_29_gbae0abe-$(uname -r | sed -e "s/\.$(uname -p)$//" | sed -re 's/[-_]/\./g')-1
 
-yum install samba
+yum install -y samba
 
-firewall-cmd --permanent --add-service=samba
-firewall-cmd --reload
+if [[ $(systemctl is-active firewalld) == active ]]; then
+    echo "Adding Firewall rules"
+    firewall-cmd --permanent --add-service=samba
+    firewall-cmd --reload
+else
+    echo "Firewall is disabled, skipping rule addition"
+fi
+
+if [[ $(getenforce) == Enforcing ]]; then
+    echo "Adding SELinux rule"
+    sudo setsebool -P samba_export_all_rw 1
+else
+    echo "SELinux not enforcing, skipping rule addition."
+fi
