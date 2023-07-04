@@ -27,7 +27,7 @@ fi
 
 if [[ $(getenforce) == Enforcing ]]; then
     echo "Adding SELinux rule"
-    sudo setsebool -P samba_export_all_rw 1
+    setsebool -P samba_export_all_rw 1
 else
     echo "SELinux not enforcing, skipping rule addition."
 fi

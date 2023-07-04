@@ -11,8 +11,6 @@ apt install -y amlfs-lustre-client-2.15.1-29-gbae0abe=$(uname -r)
 
 apt-get install -y samba
 
-ufw allow samba
-
 if [[ $(systemctl is-active ufw) == active ]]; then
     echo "Adding Firewall rules"
     ufw allow samba
@@ -22,7 +20,7 @@ fi
 
 if [[ $(getenforce) == Enforcing ]]; then
     echo "Adding SELinux rule"
-    sudo setsebool -P samba_export_all_rw 1
+    setsebool -P samba_export_all_rw 1
 else
     echo "SELinux not enforcing, skipping rule addition."
 fi
