@@ -55,7 +55,7 @@ or
 sudo systemctl restart smbd # for Ubuntu-based systems
 ```
 
-## Domain Member SAMBA server installation - SSSD AD-join
+## Domain Member SAMBA server installation
 
 This script requires two mandatory arguments: the user with priviledges for AD-join and the domain name. It installs all required packages and it provides also a basic `smb.conf` with a single share configured. Optionally, an AD Organizational Unit path can be specified for the new VM.
 
@@ -64,42 +64,12 @@ This script requires two mandatory arguments: the user with priviledges for AD-j
 ```bash
 git clone https://github.com/wolfgang-desalvador/azure-samba-recipes.git
 cd base/<YOUR_DISTRO_FOLDER>/sssd
-sudo ./sssd_join.sh -u <JOIN_USER> -d <DOMAIN_NAME> [-o <AD_OU_PATH>] # for RedHat-based systems
+sudo ./sssd_join.sh -u <JOIN_USER> -d <DOMAIN_NAME> -m <METHOD_NAME> [-o <AD_OU_PATH>] # for RedHat-based systems
 ```
 where:
 - `<JOIN_USER>` is the username with AD join priviledges
 - `<DOMAIN_NAME>` is the domain name (realm) to join in capital letters (e.g. `LUSTRE.LAB`) 
-- `<AD_OU_PATH>` is an optional OU where to place the machine in join process (e.g. `OU=SambaServer,OU=lustre,OU=lab`)
-
-Example share defaults to `/lustre-fs` path and restricts access only to `azureuser`.
-
-The `smb.conf` is not copied automatically but left to be copied in `/etc/samba/smb.conf` by the user
-
-After copying the files, SAMBA service needs to be restarted.
-
-```bash
-sudo systemctl restart smb winbind # for RedHat-based systems
-```
-or
-
-```bash
-sudo systemctl restart smbd winbind # for Ubuntu-based systems
-```
-
-## Domain Member SAMBA server installation - Winbind AD-join
-
-This script requires two mandatory arguments: the user with priviledges for AD-join and the domain name. It installs all required packages and it provides also a basic `smb.conf` with a single share configured. Optionally, an AD Organizational Unit path can be specified for the new VM.
-
->The script will backup an existing `/etc/samba/smb.conf` on `/etc/samba/smb.conf.sssd_join` and existing `/etc/krb5.conf` on `/etc/krb5.conf.sssd_join`
-
-```bash
-git clone https://github.com/wolfgang-desalvador/azure-samba-recipes.git
-cd base/<YOUR_DISTRO_FOLDER>/winbind
-sudo ./sssd_join.sh -u <JOIN_USER> -d <DOMAIN_NAME> [-o <AD_OU_PATH>] # for RedHat-based systems
-```
-where:
-- `<JOIN_USER>` is the username with AD join priviledges
-- `<DOMAIN_NAME>` is the domain name (realm) to join in capital letters (e.g. `LUSTRE.LAB`) 
+- `<METHOD_NAME>` is the method name to use for join (e.g. `winbind` or `sssd`) 
 - `<AD_OU_PATH>` is an optional OU where to place the machine in join process (e.g. `OU=SambaServer,OU=lustre,OU=lab`)
 
 Example share defaults to `/lustre-fs` path and restricts access only to `azureuser`.

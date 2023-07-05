@@ -2,7 +2,7 @@
 
 rpm --import https://packages.microsoft.com/keys/microsoft.asc
 
-SCRIPT_FOLDER="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+SCRIPT_FOLDER_STANDALONE="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 dist_version=$(rpm --eval "%dist")
 DISTRIB_CODENAME=${dist_version/*./}
@@ -34,8 +34,8 @@ else
     echo "SELinux not enforcing, skipping rule addition."
 fi
 
-cp $SCRIPT_FOLDER/smb.conf.template  $SCRIPT_FOLDER/smb.conf
+cp $SCRIPT_FOLDER_STANDALONE/smb.conf.template  $SCRIPT_FOLDER_STANDALONE/smb.conf
 
 if [[ $DISTRIB_CODENAME="el8" ]]; then
-    sed -i "/ea support/d" $SCRIPT_FOLDER/smb.conf
+    sed -i "/ea support/d" $SCRIPT_FOLDER_STANDALONE/smb.conf
 fi

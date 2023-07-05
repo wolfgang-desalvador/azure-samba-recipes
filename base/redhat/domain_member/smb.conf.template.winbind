@@ -1,0 +1,33 @@
+[global]
+    ; DOMAIN_NAME as returned by net getdomainsid
+    workgroup = <DOMAIN_NAME>
+    security = ads
+    passdb backend = tdbsam
+    ea support = off
+    
+    ; NETBIOS name as in ldap_sasl_authid parameter in /etc/sssd/sssd.conf
+    netbios name = <COMPUTER_NETBIOS_NAME>
+    kerberos method = secrets and keytab
+    ; REALM name as contained in realm list command
+    realm = <REALM_NAME>
+    ; Keep this range large enough to include system local acccounts 
+    idmap config * : range = 10000-999999
+    idmap config * : backend = tdb
+    ; keep this range to match what SSSD mapping or Active Directory parameters require
+    idmap config <DOMAIN_NAME> : range =  2000000-2999999
+    idmap config <DOMAIN_NAME> : backend = sss
+    winbind use default domain = no
+    winbind refresh tickets = yes
+    winbind offline logon = yes
+    winbind enum groups = no
+    winbind enum users = no
+
+
+[lustre-fs]
+    comment = Lustre FS
+    browseable = no
+    create mask = 0700
+    directory mask = 0700
+    valid users=LUSTRELAB\azureuser
+    read only = No
+    path = /lustre-fs
