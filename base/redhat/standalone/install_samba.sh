@@ -37,6 +37,6 @@ fi
 
 cp $SCRIPT_FOLDER_STANDALONE/smb.conf.template  $SCRIPT_FOLDER_STANDALONE/smb.conf
 
-if [[ $DISTRIB_CODENAME="el8" ]]; then
+if [[ $DISTRIB_CODENAME == "el8" ]]; then
     sed -i "/ea support/d" $SCRIPT_FOLDER_STANDALONE/smb.conf
 fi
