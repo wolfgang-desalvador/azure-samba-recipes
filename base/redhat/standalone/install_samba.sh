@@ -6,6 +6,7 @@ SCRIPT_FOLDER_STANDALONE="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 dist_version=$(rpm --eval "%dist")
 DISTRIB_CODENAME=${dist_version/*./}
+DISTRIB_CODENAME=$(echo $DISTRIB_CODENAME | cut -c -3)
 
 REPO_PATH=/etc/yum.repos.d/amlfs.repo
 echo -e "[amlfs]" > ${REPO_PATH}
