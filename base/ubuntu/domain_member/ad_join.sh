@@ -80,6 +80,8 @@ mv /etc/samba/smb.conf /etc/samba/smb.conf.bak.$METHOD_join || true
 if [ $METHOD == "winbind" ]; then
   cp /etc/nsswitch.conf /etc/nsswitch.conf.bak.$METHOD_join || true
   sed -i "s/winbind//g" /etc/nsswitch.conf
+  cat /etc/nsswitch.conf | awk '/^passwd:/{$0=$0" winbind"}{print}'  | awk '/^group:/{$0=$0" winbind"}{print}' | awk '/^shadow:/{$0=$0" winbind"}{print}' > /etc/nsswitch.conf.new
+  cp /etc/nsswitch.conf.new /etc/nsswitch.conf
 fi
 
 touch /etc/samba/smb.conf

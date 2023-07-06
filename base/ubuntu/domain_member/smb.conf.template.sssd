@@ -3,9 +3,10 @@
     workgroup = <DOMAIN_NAME>
     security = ads
     passdb backend = tdbsam
+    ; Following parameter is necessary for SMB versions <4.17
     ea support = off
     
-    ; NETBIOS name as in ldap_sasl_authid parameter in /etc/sssd/sssd.conf
+    ; NETBIOS name as in ldap_sasl_authid parameter in /etc/sssd/sssd.conf or as 
     netbios name = <COMPUTER_NETBIOS_NAME>
     kerberos method = secrets and keytab
     ; REALM name as contained in realm list command
