@@ -19,7 +19,7 @@ Scripts for Ubuntu have been tested on:
 
 # Microsoft TechCommunity Blog Post
 
-This respository relates to Microsoft TechCommunity Blog Post for SAMBA configuration for Azure Managed Lustre File System.
+This respository relates to [Microsoft TechCommunity Blog Post for SAMBA configuration for Azure Managed Lustre File System](https://techcommunity.microsoft.com/t5/blogs/blogworkflowpage/blog-id/AzureHighPerformanceComputingBlog/article-id/170).
 
 # How to use
 
@@ -32,7 +32,7 @@ Scripts are divided for each system in 3 blocks:
 
 This script doesn't require any argument. It installs all required SAMBA packages and it provides also a basic `smb.conf` with a single share configured.
 
->The script will add firewall rules and SELinux configuration to allow SAMBA to run
+>The script will add firewall rules and SELinux configuration to allow SAMBA to run. Morover it will interact with system files creating a backup copy: `/etc/samba/smb.conf`, `/etc/krb5.conf`, `/etc/nsswitch.conf`
 
 ```bash
 git clone https://github.com/wolfgang-desalvador/azure-samba-recipes.git
@@ -59,7 +59,7 @@ sudo systemctl restart smbd # for Ubuntu-based systems
 
 This script requires two mandatory arguments: the user with priviledges for AD-join and the domain name. It installs all required packages and it provides also a basic `smb.conf` with a single share configured. Optionally, an AD Organizational Unit path can be specified for the new VM.
 
->The script will backup an existing `/etc/samba/smb.conf` on `/etc/samba/smb.conf.sssd_join` and existing `/etc/krb5.conf` on `/etc/krb5.conf.sssd_join`
+>The script will backup an existing `/etc/samba/smb.conf` on `/etc/samba/smb.conf.<JOIN_METHOD>_join`, existing `/etc/krb5.conf` on `/etc/krb5.conf.<JOIN_METHOD>_join` and for Ubuntu  `/etc/nsswitch.conf` on `/etc/nsswitch.conf.<JOIN_METHOD>_join`
 
 ```bash
 git clone https://github.com/wolfgang-desalvador/azure-samba-recipes.git
@@ -85,6 +85,24 @@ or
 
 ```bash
 sudo systemctl restart smbd winbind # for Ubuntu-based systems
+```
+### AlmaLinux and SELinux
+
+For AlmaLinux, if SELinux is in Enforcing mode, you may need to explicitly whitelist some SAMBA components.
+
+If you get errors when accessing the share, you may see in `/var/log/secure` an output like the following:
+
+```bash
+Jul  7 22:20:34 alma8-winbind setroubleshoot[64877]: SELinux is preventing /usr/libexec/samba/rpcd_lsad from using the setgid capability. For complete SELinux messages run: sealert -l a11c80ed-fdbd-4823-9855-fffcd21eb92d
+```
+
+In this case it is necessary to allow the operation of `samba-dcerpcd` and `rpcd_lsad`:
+
+```bash
+ausearch -c 'samba-dcerpcd' --raw | audit2allow -M allow-samba-dcerpcd
+semodule -X 300 -i allow-samba-dcerpcd.pp
+ausearch -c 'rpcd_lsad' --raw | audit2allow -M allow-samba-rpcd_lsad
+semodule -X 300 -i allow-samba-rpcd_lsad.pp
 ```
 
 # Service customization

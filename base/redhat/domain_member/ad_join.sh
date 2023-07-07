@@ -53,7 +53,7 @@ fi
 
 $SCRIPT_FOLDER/../standalone/install_samba.sh
 
-yum install -y adcli realmd sssd krb5-workstation krb5-libs oddjob oddjob-mkhomedir samba-common-tools samba-winbind
+yum install -y adcli realmd sssd krb5-workstation krb5-libs oddjob oddjob-mkhomedir samba-common-tools samba-winbind samba-winbind-clients
 
 kinit $USER_JOIN@$DOMAIN
 
@@ -71,21 +71,3 @@ cp $SCRIPT_FOLDER/smb.conf.template.$METHOD  $SCRIPT_FOLDER/smb.conf
 sed -i "s/<COMPUTER_NETBIOS_NAME>/$(net getlocalsid | awk '{print $4}' | cut -c -15 )/g" $SCRIPT_FOLDER/smb.conf
 sed -i "s/<REALM_NAME>/$DOMAIN/g" $SCRIPT_FOLDER/smb.conf
 sed -i "s/<DOMAIN_NAME>/$(net ads workgroup -S $DOMAIN | awk '{print $2}')/g" $SCRIPT_FOLDER/smb.conf
-
-dist_version=$(rpm --eval "%dist")
-DISTRIB_CODENAME=${dist_version/*./}
-
-if [[ $DISTRIB_CODENAME="el8" ]]; then
-    sed -i "/ea support/d" $SCRIPT_FOLDER/smb.conf
-
-  if [ $(getenforce) == Enforcing ] && [ $METHOD == "winbind" ]; then
-    echo "Adding SELinux rule"
-    ausearch -c 'samba-dcerpcd' --raw | audit2allow -M allow-samba-dcerpcd
-    semodule -X 300 -i allow-samba-dcerpcd.pp
-    ausearch -c 'rpcd_lsad' --raw | audit2allow -M allow-samba-rpcd_lsad
-    semodule -X 300 -i allow-samba-rpcd_lsad.pp
-  else
-    echo "SELinux not enforcing, skipping rule addition."
-  fi
-fi
-
