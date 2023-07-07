@@ -32,7 +32,7 @@ Scripts are divided for each system in 3 blocks:
 
 This script doesn't require any argument. It installs all required SAMBA packages and it provides also a basic `smb.conf` with a single share configured.
 
->The script will add firewall rules and SELinux configuration to allow SAMBA to run. Morover it will interact with system files creating a backup copy: `/etc/samba/smb.conf`, `/etc/krb5.conf`, `/etc/nsswitch.conf`
+>The script will add firewall rules and SELinux configuration to allow SAMBA to run.
 
 ```bash
 git clone https://github.com/wolfgang-desalvador/azure-samba-recipes.git
